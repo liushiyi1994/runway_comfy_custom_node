@@ -43,31 +43,40 @@ Copy the whole `runway_direct_comfy` folder into:
 ComfyUI/custom_nodes/runway_direct_comfy
 ```
 
-If your Comfy Python environment does not already have dependencies installed,
-run from the ComfyUI folder:
+Install dependencies in the same Python environment that runs ComfyUI.
+
+For the current ComfyUI Desktop app, open the built-in terminal from the Desktop
+bottom panel, then run:
 
 ```powershell
 python -m pip install -r .\custom_nodes\runway_direct_comfy\requirements.txt
 ```
 
-## Set API Key
-
-Set the Runway key before launching ComfyUI.
-
-For the current PowerShell session:
+For ComfyUI Windows Portable, run from the portable root folder:
 
 ```powershell
-$env:RUNWAYML_API_SECRET="REPLACE_WITH_RUNWAY_API_SECRET"
-python .\main.py
+.\python_embeded\python.exe -m pip install -r .\ComfyUI\custom_nodes\runway_direct_comfy\requirements.txt
 ```
 
-For persistent Windows user environment:
+## Set API Key
+
+If you start ComfyUI by clicking the Desktop icon, set the Runway key as a
+persistent Windows user environment variable first:
 
 ```powershell
 setx RUNWAYML_API_SECRET "REPLACE_WITH_RUNWAY_API_SECRET"
 ```
 
-After `setx`, open a new terminal before launching ComfyUI.
+Close ComfyUI completely and reopen it from the icon. New apps inherit the
+updated environment variable; already-running apps do not.
+
+If you launch ComfyUI manually from PowerShell, you can set it only for that
+session:
+
+```powershell
+$env:RUNWAYML_API_SECRET="REPLACE_WITH_RUNWAY_API_SECRET"
+python .\main.py
+```
 
 ## Use In Comfy
 
