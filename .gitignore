@@ -1,0 +1,9 @@
+outputs/
+output/
+*.json
+__pycache__/
+*.pyc
+*_request.json
+*_operation.json
+*.env
+*.key
