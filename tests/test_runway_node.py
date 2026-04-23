@@ -1,5 +1,7 @@
 import unittest
 from io import BytesIO
+import importlib.util
+from pathlib import Path
 
 import numpy as np
 from PIL import Image
@@ -21,6 +23,19 @@ class RunwayNodeTests(unittest.TestCase):
         node_class = NODE_CLASS_MAPPINGS["RunwayImageToVideoDirectNode"]
 
         self.assertIs(getattr(node_class, "OUTPUT_NODE", False), True)
+
+    def test_repo_root_entrypoint_exports_comfy_mappings(self):
+        root_init = Path(__file__).resolve().parents[1] / "__init__.py"
+        spec = importlib.util.spec_from_file_location("runway_comfy_repo_entrypoint", root_init)
+        module = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        spec.loader.exec_module(module)
+
+        self.assertIn("RunwayImageToVideoDirectNode", module.NODE_CLASS_MAPPINGS)
+        self.assertEqual(
+            module.NODE_DISPLAY_NAME_MAPPINGS["RunwayImageToVideoDirectNode"],
+            "Runway Image To Video (Direct API)",
+        )
 
     def test_comfy_image_to_png_bytes_converts_float_batch_image(self):
         image = np.zeros((1, 2, 3, 3), dtype=np.float32)

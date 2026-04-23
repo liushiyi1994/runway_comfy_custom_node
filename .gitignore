@@ -1,5 +1,6 @@
 outputs/
 output/
+docs/superpowers/
 *.json
 __pycache__/
 *.pyc

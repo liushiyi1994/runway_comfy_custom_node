@@ -23,7 +23,7 @@ Inputs:
 - `image`: Comfy `IMAGE`
 - `prompt`: motion/camera prompt
 - `model`: defaults to `gen4.5`
-- `ratio`: `1280:720` or `720:1280`
+- `ratio`: `1280:720`, `720:1280`, `1104:832`, `960:960`, `832:1104`, or `1584:672`
 - `duration`: 2 to 10 seconds
 - `seed`: `0` omits seed
 - `filename_prefix`: prefix for the downloaded `.mp4`
@@ -37,7 +37,24 @@ Outputs:
 
 ## Install
 
-Copy the whole `runway_direct_comfy` folder into:
+For ComfyUI Desktop on Windows:
+
+```powershell
+cd C:\Users\<you>\Documents\ComfyUI\custom_nodes
+git clone https://github.com/liushiyi1994/runway_comfy_custom_node.git runway_direct_comfy
+cd C:\Users\<you>\Documents\ComfyUI
+.\.venv\Scripts\python.exe -m pip install -r .\custom_nodes\runway_direct_comfy\requirements.txt
+```
+
+If you already cloned the repo, update it with:
+
+```powershell
+cd C:\Users\<you>\Documents\ComfyUI\custom_nodes\runway_direct_comfy
+git pull
+```
+
+If you are installing by copying files instead, copy the whole
+`runway_direct_comfy` folder into:
 
 ```text
 ComfyUI/custom_nodes/runway_direct_comfy
@@ -49,7 +66,7 @@ For the current ComfyUI Desktop app, open the built-in terminal from the Desktop
 bottom panel, then run:
 
 ```powershell
-python -m pip install -r .\custom_nodes\runway_direct_comfy\requirements.txt
+.\.venv\Scripts\python.exe -m pip install -r .\custom_nodes\runway_direct_comfy\requirements.txt
 ```
 
 For ComfyUI Windows Portable, run from the portable root folder:

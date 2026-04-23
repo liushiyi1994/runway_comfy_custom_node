@@ -11,19 +11,34 @@ JSON.
 
 ## Install
 
-Copy the package folder into ComfyUI:
+For ComfyUI Desktop on Windows:
+
+```powershell
+cd C:\Users\<you>\Documents\ComfyUI\custom_nodes
+git clone https://github.com/liushiyi1994/runway_comfy_custom_node.git runway_direct_comfy
+cd C:\Users\<you>\Documents\ComfyUI
+.\.venv\Scripts\python.exe -m pip install -r .\custom_nodes\runway_direct_comfy\requirements.txt
+```
+
+If you already cloned the repo, update it with:
+
+```powershell
+cd C:\Users\<you>\Documents\ComfyUI\custom_nodes\runway_direct_comfy
+git pull
+```
+
+If you are installing by copying files instead, copy the package folder to:
 
 ```text
 ComfyUI/custom_nodes/runway_direct_comfy
 ```
 
-Install dependencies in the same Python environment that runs ComfyUI.
-
+Then install dependencies in the same Python environment that runs ComfyUI.
 For the current ComfyUI Desktop app, open the built-in terminal from the Desktop
 bottom panel, then run:
 
 ```powershell
-python -m pip install -r .\custom_nodes\runway_direct_comfy\requirements.txt
+.\.venv\Scripts\python.exe -m pip install -r .\custom_nodes\runway_direct_comfy\requirements.txt
 ```
 
 For ComfyUI Windows Portable, run from the portable root folder:
