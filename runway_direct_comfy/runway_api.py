@@ -15,7 +15,7 @@ import requests
 RUNWAY_API_BASE_URL = "https://api.dev.runwayml.com/v1"
 RUNWAY_API_VERSION = "2024-11-06"
 DEFAULT_MODEL = "gen4.5"
-VALID_MODELS = ("gen4.5", "gen4_turbo", "veo3.1", "veo3.1_fast", "veo3")
+VALID_MODELS = ("gen4.5",)
 VALID_RATIOS = ("1280:720", "720:1280")
 MIN_DURATION_SECONDS = 2
 MAX_DURATION_SECONDS = 10
