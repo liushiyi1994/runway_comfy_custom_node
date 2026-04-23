@@ -1,10 +1,12 @@
 import unittest
+from io import BytesIO
 
 import numpy as np
 from PIL import Image
 
 from runway_direct_comfy import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS
-from runway_direct_comfy.runway_node import comfy_image_to_png_bytes
+from runway_direct_comfy import runway_node
+from runway_direct_comfy.runway_api import image_bytes_to_data_uri
 
 
 class RunwayNodeTests(unittest.TestCase):
@@ -24,11 +26,26 @@ class RunwayNodeTests(unittest.TestCase):
         image = np.zeros((1, 2, 3, 3), dtype=np.float32)
         image[0, :, :, 0] = 1.0
 
-        png_bytes = comfy_image_to_png_bytes(image)
+        png_bytes = runway_node.comfy_image_to_png_bytes(image)
 
         self.assertTrue(png_bytes.startswith(b"\x89PNG\r\n\x1a\n"))
-        decoded = Image.open(__import__("io").BytesIO(png_bytes))
+        decoded = Image.open(BytesIO(png_bytes))
         self.assertEqual(decoded.size, (3, 2))
+        self.assertEqual(decoded.mode, "RGB")
+
+    def test_comfy_image_to_runway_image_bytes_limits_data_uri_size(self):
+        rng = np.random.default_rng(123)
+        image = rng.random((1, 512, 512, 3), dtype=np.float32)
+
+        image_bytes, mime_type = runway_node.comfy_image_to_runway_image_bytes(
+            image,
+            max_data_uri_bytes=60_000,
+        )
+        data_uri = image_bytes_to_data_uri(image_bytes, mime_type=mime_type)
+
+        self.assertEqual(mime_type, "image/jpeg")
+        self.assertLessEqual(len(data_uri.encode("utf-8")), 60_000)
+        decoded = Image.open(BytesIO(image_bytes))
         self.assertEqual(decoded.mode, "RGB")
 
 

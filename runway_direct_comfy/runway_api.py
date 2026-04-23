@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import json
 import os
 import re
 import time
@@ -16,7 +17,8 @@ RUNWAY_API_BASE_URL = "https://api.dev.runwayml.com/v1"
 RUNWAY_API_VERSION = "2024-11-06"
 DEFAULT_MODEL = "gen4.5"
 VALID_MODELS = ("gen4.5",)
-VALID_RATIOS = ("1280:720", "720:1280")
+VALID_RATIOS = ("1280:720", "720:1280", "1104:832", "960:960", "832:1104", "1584:672")
+MAX_IMAGE_DATA_URI_BYTES = 5 * 1024 * 1024
 MIN_DURATION_SECONDS = 2
 MAX_DURATION_SECONDS = 10
 MAX_SEED = 4294967295
@@ -147,11 +149,22 @@ def parse_runway_response(response: requests.Response) -> dict[str, Any]:
 
 
 def format_runway_error(data: dict[str, Any]) -> str:
-    if "message" in data:
-        return str(data["message"])
-    if "error" in data:
-        return str(data["error"])
-    return str(data)[:2000]
+    parts: list[str] = []
+    for key in ("message", "error"):
+        value = data.get(key)
+        if value:
+            parts.append(str(value))
+
+    details = {key: value for key, value in data.items() if key not in {"message", "error"}}
+    if details:
+        try:
+            detail_text = json.dumps(details, ensure_ascii=True)
+        except TypeError:
+            detail_text = str(details)
+        if detail_text:
+            parts.append(detail_text[:2000])
+
+    return " | ".join(parts) if parts else str(data)[:2000]
 
 
 def wait_for_task(
@@ -233,6 +246,7 @@ def download_file(url: str, output_path: str | os.PathLike[str]) -> Path:
 def generate_image_to_video(
     *,
     image_bytes: bytes,
+    mime_type: str = "image/png",
     prompt: str,
     output_dir: str | os.PathLike[str],
     filename_prefix: str = "runway",
@@ -248,7 +262,7 @@ def generate_image_to_video(
     config = RunwayConfig(api_key=api_key)
     payload = build_image_to_video_payload(
         prompt=prompt,
-        prompt_image_uri=image_bytes_to_data_uri(image_bytes),
+        prompt_image_uri=image_bytes_to_data_uri(image_bytes, mime_type=mime_type),
         model=model,
         ratio=ratio,
         duration=duration,

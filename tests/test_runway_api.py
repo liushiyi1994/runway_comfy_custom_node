@@ -10,6 +10,7 @@ from runway_direct_comfy.runway_api import (
     build_headers,
     build_image_to_video_payload,
     extract_task_output_url,
+    format_runway_error,
     get_api_key,
     image_bytes_to_data_uri,
     make_output_path,
@@ -40,6 +41,23 @@ class RunwayApiHelperTests(unittest.TestCase):
 
         self.assertEqual(uri, "data:image/png;base64,YWJj")
 
+    def test_format_runway_error_includes_validation_details(self):
+        message = format_runway_error(
+            {
+                "message": "Validation of body failed",
+                "issues": [
+                    {
+                        "path": ["promptImage"],
+                        "message": "String must contain at most 5242880 character(s)",
+                    }
+                ],
+            }
+        )
+
+        self.assertIn("Validation of body failed", message)
+        self.assertIn("promptImage", message)
+        self.assertIn("5242880", message)
+
     def test_build_payload_defaults_to_latest_model_and_omits_zero_seed(self):
         payload = build_image_to_video_payload(
             prompt="A slow dolly push with soft atmospheric movement.",
@@ -66,6 +84,18 @@ class RunwayApiHelperTests(unittest.TestCase):
         )
 
         self.assertEqual(payload["seed"], 42)
+
+    def test_build_payload_accepts_gen45_image_to_video_ratios(self):
+        for ratio in ("1280:720", "720:1280", "1104:832", "960:960", "832:1104", "1584:672"):
+            with self.subTest(ratio=ratio):
+                payload = build_image_to_video_payload(
+                    prompt="Subtle cinematic motion.",
+                    prompt_image_uri="data:image/png;base64,YWJj",
+                    ratio=ratio,
+                    duration=5,
+                )
+
+                self.assertEqual(payload["ratio"], ratio)
 
     def test_build_payload_validates_prompt_ratio_and_duration(self):
         kwargs = {
