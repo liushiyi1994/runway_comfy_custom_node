@@ -15,6 +15,11 @@ class RunwayNodeTests(unittest.TestCase):
             "Runway Image To Video (Direct API)",
         )
 
+    def test_runway_node_is_output_node_because_it_saves_video(self):
+        node_class = NODE_CLASS_MAPPINGS["RunwayImageToVideoDirectNode"]
+
+        self.assertIs(getattr(node_class, "OUTPUT_NODE", False), True)
+
     def test_comfy_image_to_png_bytes_converts_float_batch_image(self):
         image = np.zeros((1, 2, 3, 3), dtype=np.float32)
         image[0, :, :, 0] = 1.0

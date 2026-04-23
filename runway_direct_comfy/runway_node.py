@@ -45,6 +45,7 @@ class RunwayImageToVideoDirectNode:
     RETURN_NAMES = ("video_path", "task_id")
     FUNCTION = "generate"
     CATEGORY = "Runway/Direct API"
+    OUTPUT_NODE = True
 
     def generate(
         self,
